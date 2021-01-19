@@ -325,6 +325,21 @@ namespace SerialPortApp
         }
 
         /*
+         * Click to stop drawing a chart
+         * @param sender - contains a reference to the control/object
+         * @param e - contains the event data
+         */
+        private void button_chart_Stop_Click(object sender, EventArgs e)
+        {
+            chart1.Series[0].Points.Clear();
+            // Add empty point to make chart visible before first sample arrived
+            chart1.Series[0].Points.AddXY(double.NaN, double.NaN);
+            chart1.ChartAreas[0].AxisX.Minimum = 0;
+            chart1.ChartAreas[0].AxisX.Maximum = _plotTimeMax;
+            _spManager.NewSerialDataRecieved -= new EventHandler<SerialDataEventArgs>(_spManager_NewPlotDataRecieved);
+        }
+
+        /*
          * Input plot new data recieved event handling function. Update of 'PlotInput' chart.
          * @param sender - contains a reference to the control/object
          * @param e - contains the serial port event data
@@ -351,6 +366,13 @@ namespace SerialPortApp
                     _outValue_Str = _outValue_Str.Remove(0, _spMsgSize);
 
                     double outValue = reg;
+
+                    if (_plotTime > _plotTimeMax)
+                    {
+                        chart1.Series[0].Points.RemoveAt(1);
+                        chart1.ChartAreas[0].AxisX.Minimum = _plotTime - _plotTimeMax;
+                        chart1.ChartAreas[0].AxisX.Maximum = _plotTime;
+                    }
 
                     chart1.Series[0].Points.AddXY(_plotTime, outValue);
                     _plotTime += _plotTimeStep;
