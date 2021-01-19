@@ -46,9 +46,11 @@ typedef enum {FALSE = 0, TRUE} bool;
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define enc_counter_max 100
-#define enc_counter_min 0
-#define enc_counter_step 1
+uint8_t enc_counter_max = 125;
+#define enc_counter_min  0
+#define enc_counter_step  1
+
+#define SP_MSG_SIZE 3
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -57,30 +59,30 @@ typedef enum {FALSE = 0, TRUE} bool;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-
 /* USER CODE BEGIN PV */
-float32_t SWV_VAR = 0.0f;
+
+arm_pid_instance_f32 pid;
+/* Choose PID parameters */
+#define PID_PARAM_KP        5.0f              /* Proporcional 5.0 */
+#define PID_PARAM_KI        0.4f              /* Integral 0.4 */
+#define PID_PARAM_KD        0.0f              /* Derivative */
 
 float32_t LED_lux = 0.0f;
-
-float32_t set_point = 0.0f;
-arm_pid_instance_f32 pid;
-
-float32_t PID_in = 0.0f;
+uint32_t set_point = 0.0f;
 float32_t PID_out = 0.0f;
 float32_t PID_error = 0.0f;
+float32_t PID_error_in_procent = 0.0f;
 float32_t d_PWM = 0.0f;
-
-
-/* Choose PID parameters */
-#define PID_PARAM_KP        5.0f              /* Proporcional */
-#define PID_PARAM_KI        3.0f              /* Integral */
-#define PID_PARAM_KD        0.0f              /* Derivative */
+uint32_t PID_INT = 0;
 
 bool BTN_State_1 = FALSE;
 bool LCD_show_ERROR = FALSE;
 uint32_t enc_counter = enc_counter_min;
 
+// Komunikacja USART3
+uint8_t tx_n;
+uint8_t tx_buffer[50];
+uint8_t RX_DATA[SP_MSG_SIZE + 1];
 
 /* USER CODE END PV */
 
@@ -92,35 +94,32 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-float32_t RMSE( float32_t* y, float32_t* yref, uint32_t len )
-{
-	float32_t sum_sq_error = 0;
-	for ( uint32_t i = 0; i < len ; i++)
-		sum_sq_error += ( yref[i] - y[i] ) * ( yref[i] - y[i] );
-	return sqrtf ( sum_sq_error / len );
-}
-
-
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance == TIM2)
 	{
-
 		// Odczyt sensora i zapis odczytanej wartości do zmiennej LED_lux
-		PID_in = SENSOR_BH1750_ReadLux(&hbh1750_1);
+		LED_lux = SENSOR_BH1750_ReadLux(&hbh1750_1);
+		// konwersja float32_t na uint32_t
+		PID_INT = (uint32_t)LED_lux;
+		tx_n = sprintf(tx_buffer, "%03x", PID_INT);
+		// wysłanie wiadomości pod określonym warunkiem
+		if(tx_n == SP_MSG_SIZE )
+			HAL_UART_Transmit(&huart3, (uint8_t*)tx_buffer, tx_n, 1);
 
-
+		// Ustawianie parametrów regulatora PID
 		pid.Kp = PID_PARAM_KP;
 		pid.Ki = PID_PARAM_KI;
 		pid.Kd = PID_PARAM_KD;
 
 		// wejście regulatora PID
-		PID_error = set_point - PID_in;
+		PID_error = set_point - LED_lux;
+		PID_error_in_procent = (fabs(PID_error)/(enc_counter_max-enc_counter_min))*100;
 		PID_out = arm_pid_f32(&pid, PID_error);
-        /* Check overflow, duty cycle in percent */
 
-		// Sygnalizacja poprawności układu regulacji
-		if(PID_error <= 1.0 )
+
+		// Dodatkowa sygnalizacja poprawności układu regulacji
+		if(PID_error_in_procent <= 1.0 )
 		{
 			// zakończy powodzeniem załącz diodę zieloną
 			HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, GPIO_PIN_SET);
@@ -134,7 +133,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		}
 
 
-		if(PID_out > 1000){
+		if(PID_out > 1000)
+		{
 			d_PWM = 1000;
 		}
 		else if(PID_out < 0)
@@ -158,13 +158,32 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, d_PWM);
 		}
 	}
+	if(htim->Instance == TIM7)
+	{
+		// Wyświetlanie wiadomości na ekranie realizowanie za pomocą timera o okresie 10ms
+		if(LCD_show_ERROR)
+		{
+			LCD_SetCursor(&hlcd1, 0, 0);
+			LCD_printf(&hlcd1, "ERROR: %5.2f [ ]", PID_error_in_procent);
+		  	// LCD_SetCursor(&hlcd1, 0, 14);
+			// lcd_write(&hlcd1, &data, 8);
+		 	LCD_SetCursor(&hlcd1, 1, 0);
+		 	LCD_printStr(&hlcd1, "               ");
+		}
+		else
+		{
+			LCD_SetCursor(&hlcd1, 0, 0);
+			LCD_printf(&hlcd1, "WYJ: %5.2f [lux] ", (float32_t)LED_lux);
+			LCD_SetCursor(&hlcd1, 1, 0);
+			LCD_printf(&hlcd1, "ZAD: %03d [lux]  ", (uint32_t)set_point);
+		}
+	}
 }
-
 
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	if(GPIO_Pin == ENC_CLK_Pin)
+	if(GPIO_Pin == ENC_CLK_Pin) // Impulsator obrotowy
 	{
 		 if (HAL_GPIO_ReadPin(ENC_DT_GPIO_Port, ENC_DT_Pin) == GPIO_PIN_RESET)
 		 {
@@ -177,17 +196,52 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			 set_point = enc_counter;
 		 }
 	}
-	else if(GPIO_Pin == EX1_Btn_Pin)
+	else if(GPIO_Pin == EX1_Btn_Pin) // przycisk, do przełączania liczby sterowanych diod
 	{
 		BTN_State_1 = !BTN_State_1;
+		if(BTN_State_1 == TRUE)
+		{
+			enc_counter_max = 180.0f;
+
+		}
+		else
+		{
+			enc_counter_max = 125.0f;
+			if(set_point > enc_counter_max)
+			{
+				set_point = enc_counter_max;
+			}
+		}
 	}
-	else if(GPIO_Pin == EX2_Btn_Pin)
+	else if(GPIO_Pin == EX2_Btn_Pin)  // przycisk, do przełączania ekranu w lcd
 	{
 		LCD_show_ERROR = !LCD_show_ERROR;
 	}
 }
 
-
+void HAL_UART_RxCpltCallback( UART_HandleTypeDef *huart )
+{
+	if( huart->Instance == USART3 )
+	{
+		/* Set point value read from serial port . */
+		static int UART_set_point;
+		/* Number of items successfully filled by 'sscanf '. */
+		static int rx_n;
+		/* Three - digit hexadecimal number : C- string to integer . */
+		rx_n = sscanf((char*)RX_DATA, "%3x", &UART_set_point );
+		/* If conversion if successful set set_point value or set control by one or two LEDs . */
+		if( rx_n == 1)
+			set_point = (uint32_t)UART_set_point;
+		else if( RX_DATA[0] == 'T' && RX_DATA[1] == 'W' && RX_DATA[2] == 'O' ){
+			BTN_State_1 = TRUE;
+		}
+		else if( RX_DATA[0] == 'O' && RX_DATA[1] == 'N' && RX_DATA[2] == 'E' ){
+			BTN_State_1 = FALSE;
+		}
+		/* Start listening for the next message . */
+		HAL_UART_Receive_IT(&huart3, RX_DATA, SP_MSG_SIZE);
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -236,19 +290,22 @@ int main(void)
   SENSOR_BH1750_Init(&hbh1750_1);
 
   // Obsługa regulatora PID
+  arm_pid_init_f32(&pid, 1);
   HAL_TIM_Base_Start_IT(&htim2);
-  __HAL_TIM_SET_AUTORELOAD(&htim2, 19999);
+  __HAL_TIM_SET_AUTORELOAD(&htim2, 99999);
+
+  // Inicjalizajca kanałów PWM timera TIM3
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
-  arm_pid_init_f32(&pid, 1);
 
-
-  // Wyświetlacz LCD
+  // Inicjalizacja lcd
   LCD_Init(&hlcd1);
+  // Wyświetlanie danych na Lcd co 10ms
+  HAL_TIM_Base_Start_IT(&htim7);
+  __HAL_TIM_SET_AUTORELOAD(&htim7, 9999);
 
-
-  //HAL_ADC_Start(&hadc1);
-  //HAL_TIM_Base_Start_IT(&htim6);
+  // Port szeregowy USART3
+  HAL_UART_Receive_IT(&huart3, RX_DATA, SP_MSG_SIZE);
 
   /* USER CODE END 2 */
 
@@ -257,21 +314,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  if(LCD_show_ERROR)
-	  {
-		  LCD_SetCursor(&hlcd1, 0, 0);
-		  LCD_printf(&hlcd1, "ERROR: %05d [%]  ", (uint32_t)((PID_error/enc_counter_max)*100));
-	  }
-	  else
-	  {
-		  LCD_SetCursor(&hlcd1, 0, 0);
-		  LCD_printf(&hlcd1, "WYJ: %03d [lux]  ", (uint32_t)PID_in);
-		  LCD_SetCursor(&hlcd1, 1, 0);
-		  LCD_printf(&hlcd1, "ZAD: %03d [lux]  ", (uint32_t)set_point);
-	  }
 
-
-	  HAL_Delay(100);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
