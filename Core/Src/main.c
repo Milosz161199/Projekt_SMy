@@ -19,11 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "adc.h"
-#include "dac.h"
-#include "dma.h"
 #include "i2c.h"
-#include "spi.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -64,6 +60,7 @@ uint8_t enc_counter_max = 125;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+
 /* USER CODE BEGIN PV */
 
 arm_pid_instance_f32 pid;
@@ -252,17 +249,11 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_USART3_UART_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_TIM4_Init();
   MX_I2C1_Init();
-  MX_SPI4_Init();
-  MX_ADC1_Init();
-  MX_DAC_Init();
-  MX_TIM6_Init();
-  MX_TIM7_Init();
   MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
 
