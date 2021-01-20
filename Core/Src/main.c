@@ -51,6 +51,11 @@ uint8_t enc_counter_max = 125;
 #define enc_counter_step  1
 
 #define SP_MSG_SIZE 3
+
+/* Choose PID parameters */
+#define PID_PARAM_KP        5.0f              /* Proporcional 5.0 */
+#define PID_PARAM_KI        3.0f              /* Integral 0.4 */
+#define PID_PARAM_KD        0.0f              /* Derivative */
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -62,10 +67,6 @@ uint8_t enc_counter_max = 125;
 /* USER CODE BEGIN PV */
 
 arm_pid_instance_f32 pid;
-/* Choose PID parameters */
-#define PID_PARAM_KP        5.0f              /* Proporcional 5.0 */
-#define PID_PARAM_KI        0.4f              /* Integral 0.4 */
-#define PID_PARAM_KD        0.0f              /* Derivative */
 
 float32_t LED_lux = 0.0f;
 uint32_t set_point = 0.0f;
@@ -73,7 +74,7 @@ float32_t PID_out = 0.0f;
 float32_t PID_error = 0.0f;
 float32_t PID_error_in_procent = 0.0f;
 float32_t d_PWM = 0.0f;
-uint32_t PID_INT = 0;
+uint32_t LED_lux_int = 0;
 
 bool BTN_State_1 = FALSE;
 bool LCD_show_ERROR = FALSE;
@@ -101,11 +102,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		// Odczyt sensora i zapis odczytanej wartości do zmiennej LED_lux
 		LED_lux = SENSOR_BH1750_ReadLux(&hbh1750_1);
 		// konwersja float32_t na uint32_t
-		PID_INT = (uint32_t)LED_lux;
-		tx_n = sprintf(tx_buffer, "%03x", PID_INT);
+		LED_lux_int = (uint32_t)LED_lux;
+		tx_n = sprintf(tx_buffer, "%03x", LED_lux_int);
 		// wysłanie wiadomości pod określonym warunkiem
 		if(tx_n == SP_MSG_SIZE )
-			HAL_UART_Transmit(&huart3, (uint8_t*)tx_buffer, tx_n, 1);
+			 HAL_UART_Transmit(&huart3, (uint8_t*)tx_buffer, tx_n, 1);
 
 		// Ustawianie parametrów regulatora PID
 		pid.Kp = PID_PARAM_KP;
@@ -114,7 +115,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 		// wejście regulatora PID
 		PID_error = set_point - LED_lux;
-		PID_error_in_procent = (fabs(PID_error)/(enc_counter_max-enc_counter_min))*100;
+		PID_error_in_procent = (fabs(PID_error)/(enc_counter_max - enc_counter_min))*100;
 		PID_out = arm_pid_f32(&pid, PID_error);
 
 
@@ -158,28 +159,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, d_PWM);
 		}
 	}
-	if(htim->Instance == TIM7)
-	{
-		// Wyświetlanie wiadomości na ekranie realizowanie za pomocą timera o okresie 10ms
-		if(LCD_show_ERROR)
-		{
-			LCD_SetCursor(&hlcd1, 0, 0);
-			LCD_printf(&hlcd1, "ERROR: %5.2f [ ]", PID_error_in_procent);
-		  	// LCD_SetCursor(&hlcd1, 0, 14);
-			// lcd_write(&hlcd1, &data, 8);
-		 	LCD_SetCursor(&hlcd1, 1, 0);
-		 	LCD_printStr(&hlcd1, "               ");
-		}
-		else
-		{
-			LCD_SetCursor(&hlcd1, 0, 0);
-			LCD_printf(&hlcd1, "WYJ: %5.2f [lux] ", (float32_t)LED_lux);
-			LCD_SetCursor(&hlcd1, 1, 0);
-			LCD_printf(&hlcd1, "ZAD: %03d [lux]  ", (uint32_t)set_point);
-		}
-	}
 }
-
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
@@ -292,7 +272,7 @@ int main(void)
   // Obsługa regulatora PID
   arm_pid_init_f32(&pid, 1);
   HAL_TIM_Base_Start_IT(&htim2);
-  __HAL_TIM_SET_AUTORELOAD(&htim2, 99999);
+  __HAL_TIM_SET_AUTORELOAD(&htim2, 129999);
 
   // Inicjalizajca kanałów PWM timera TIM3
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
@@ -301,8 +281,8 @@ int main(void)
   // Inicjalizacja lcd
   LCD_Init(&hlcd1);
   // Wyświetlanie danych na Lcd co 10ms
-  HAL_TIM_Base_Start_IT(&htim7);
-  __HAL_TIM_SET_AUTORELOAD(&htim7, 9999);
+  //HAL_TIM_Base_Start_IT(&htim7);
+  //__HAL_TIM_SET_AUTORELOAD(&htim7, 9999);
 
   // Port szeregowy USART3
   HAL_UART_Receive_IT(&huart3, RX_DATA, SP_MSG_SIZE);
@@ -314,7 +294,23 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+	  if(LCD_show_ERROR)
+	  		{
+	  			LCD_SetCursor(&hlcd1, 0, 0);
+	  			LCD_printf(&hlcd1, "ERROR: %5.2f [ ]", PID_error_in_procent);
+	  		  	// LCD_SetCursor(&hlcd1, 0, 14);
+	  			// lcd_write(&hlcd1, &data, 8);
+	  		 	LCD_SetCursor(&hlcd1, 1, 0);
+	  		 	LCD_printStr(&hlcd1, "               ");
+	  		}
+	  		else
+	  		{
+	  			LCD_SetCursor(&hlcd1, 0, 0);
+	  			LCD_printf(&hlcd1, "WYJ: %5.2f [lux] ", (float32_t)LED_lux);
+	  			LCD_SetCursor(&hlcd1, 1, 0);
+	  			LCD_printf(&hlcd1, "ZAD: %03d [lux]  ", (uint32_t)set_point);
+	  		}
+	  HAL_Delay(10);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
