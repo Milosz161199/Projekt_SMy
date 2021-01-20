@@ -42,16 +42,16 @@ typedef enum {FALSE = 0, TRUE} bool;
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-uint8_t enc_counter_max = 125;
-#define enc_counter_min  0
-#define enc_counter_step  1
+uint8_t enc_counter_max = 110;
+#define enc_counter_min     2
+#define enc_counter_step    1
 
 #define SP_MSG_SIZE 3
 
 /* Choose PID parameters */
-#define PID_PARAM_KP        5.0f              /* Proporcional 5.0 */
-#define PID_PARAM_KI        3.0f              /* Integral 0.4 */
-#define PID_PARAM_KD        0.0f              /* Derivative */
+#define PID_PARAM_KP        6.0f              /* Proporcional 5.0 */
+#define PID_PARAM_KI        1.8f              /* Integral 0.4 */
+#define PID_PARAM_KD        0.1f              /* Derivative */
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -105,10 +105,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		if(tx_n == SP_MSG_SIZE )
 			 HAL_UART_Transmit(&huart3, (uint8_t*)tx_buffer, tx_n, 1);
 
-		// Ustawianie parametrów regulatora PID
-		pid.Kp = PID_PARAM_KP;
-		pid.Ki = PID_PARAM_KI;
-		pid.Kd = PID_PARAM_KD;
 
 		// wejście regulatora PID
 		PID_error = set_point - LED_lux;
@@ -178,12 +174,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		BTN_State_1 = !BTN_State_1;
 		if(BTN_State_1 == TRUE)
 		{
-			enc_counter_max = 180.0f;
+			enc_counter_max = 180;
 
 		}
 		else
 		{
-			enc_counter_max = 125.0f;
+			enc_counter_max = 110;
 			if(set_point > enc_counter_max)
 			{
 				set_point = enc_counter_max;
@@ -207,13 +203,17 @@ void HAL_UART_RxCpltCallback( UART_HandleTypeDef *huart )
 		/* Three - digit hexadecimal number : C- string to integer . */
 		rx_n = sscanf((char*)RX_DATA, "%3x", &UART_set_point );
 		/* If conversion if successful set set_point value or set control by one or two LEDs . */
-		if( rx_n == 1)
+		if( rx_n == 1){
 			set_point = (uint32_t)UART_set_point;
+			enc_counter = (uint32_t)UART_set_point;
+		}
 		else if( RX_DATA[0] == 'T' && RX_DATA[1] == 'W' && RX_DATA[2] == 'O' ){
 			BTN_State_1 = TRUE;
+			enc_counter_max = 180;
 		}
 		else if( RX_DATA[0] == 'O' && RX_DATA[1] == 'N' && RX_DATA[2] == 'E' ){
 			BTN_State_1 = FALSE;
+			enc_counter_max = 110;
 		}
 		/* Start listening for the next message . */
 		HAL_UART_Receive_IT(&huart3, RX_DATA, SP_MSG_SIZE);
@@ -260,10 +260,20 @@ int main(void)
   // Inicjalizacja sensora
   SENSOR_BH1750_Init(&hbh1750_1);
 
+  // Początkowe wartości
+  LED_lux = 2.0f;
+  set_point = 2.0;
+
   // Obsługa regulatora PID
+  // Ustawianie parametrów regulatora PID
+  pid.Kp = PID_PARAM_KP;
+  pid.Ki = PID_PARAM_KI;
+  pid.Kd = PID_PARAM_KD;
+
   arm_pid_init_f32(&pid, 1);
-  HAL_TIM_Base_Start_IT(&htim2);
   __HAL_TIM_SET_AUTORELOAD(&htim2, 129999);
+  HAL_TIM_Base_Start_IT(&htim2);
+
 
   // Inicjalizajca kanałów PWM timera TIM3
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
@@ -271,6 +281,7 @@ int main(void)
 
   // Inicjalizacja lcd
   LCD_Init(&hlcd1);
+
   // Wyświetlanie danych na Lcd co 10ms
   //HAL_TIM_Base_Start_IT(&htim7);
   //__HAL_TIM_SET_AUTORELOAD(&htim7, 9999);
@@ -286,22 +297,22 @@ int main(void)
   {
     /* USER CODE END WHILE */
 	  if(LCD_show_ERROR)
-	  		{
-	  			LCD_SetCursor(&hlcd1, 0, 0);
-	  			LCD_printf(&hlcd1, "ERROR: %5.2f [ ]", PID_error_in_procent);
-	  		  	// LCD_SetCursor(&hlcd1, 0, 14);
-	  			// lcd_write(&hlcd1, &data, 8);
-	  		 	LCD_SetCursor(&hlcd1, 1, 0);
-	  		 	LCD_printStr(&hlcd1, "               ");
-	  		}
-	  		else
-	  		{
-	  			LCD_SetCursor(&hlcd1, 0, 0);
-	  			LCD_printf(&hlcd1, "WYJ: %5.2f [lux] ", (float32_t)LED_lux);
-	  			LCD_SetCursor(&hlcd1, 1, 0);
-	  			LCD_printf(&hlcd1, "ZAD: %03d [lux]  ", (uint32_t)set_point);
-	  		}
-	  HAL_Delay(10);
+	  {
+		  LCD_SetCursor(&hlcd1, 0, 0);
+		  LCD_printf(&hlcd1, "ERROR: %5.2f [ ]", PID_error_in_procent);
+		  // LCD_SetCursor(&hlcd1, 0, 14);
+		  // lcd_write(&hlcd1, &data, 8);
+		  LCD_SetCursor(&hlcd1, 1, 0);
+		  LCD_printStr(&hlcd1, "               ");
+	  }
+	  else
+	  {
+		  LCD_SetCursor(&hlcd1, 0, 0);
+		  LCD_printf(&hlcd1, "WYJ: %5.2f [lux] ", (float32_t)LED_lux);
+		  LCD_SetCursor(&hlcd1, 1, 0);
+		  LCD_printf(&hlcd1, "ZAD: %03d [lux]  ", (uint32_t)set_point);
+	  }
+	  HAL_Delay(100);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

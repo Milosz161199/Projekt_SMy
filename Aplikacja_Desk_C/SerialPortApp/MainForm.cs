@@ -298,6 +298,8 @@ namespace SerialPortApp
             picked_type_of_control_One_LED = false;
             _spManager.Send("TWO");
             label_type_of_control.Text = "You are controling both of LEDs.";
+            this.button_Both.BackColor = System.Drawing.Color.Blue;
+            this.button_One.BackColor = System.Drawing.Color.Gray;
         }
 
         /*
@@ -311,6 +313,8 @@ namespace SerialPortApp
             picked_type_of_control_One_LED = true;
             _spManager.Send("ONE");
             label_type_of_control.Text = "You are controling just one LED.";
+            this.button_Both.BackColor = System.Drawing.Color.Gray;
+            this.button_One.BackColor = System.Drawing.Color.Blue;
         }
 
         /*

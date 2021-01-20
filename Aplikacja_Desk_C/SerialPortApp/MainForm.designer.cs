@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.baudRateLabel = new System.Windows.Forms.Label();
             this.dataBitsLabel = new System.Windows.Forms.Label();
             this.parityLabel = new System.Windows.Forms.Label();
@@ -370,44 +370,46 @@
             // 
             // button_chart_Stop
             // 
-            this.button_chart_Stop.Location = new System.Drawing.Point(161, 383);
+            this.button_chart_Stop.BackColor = System.Drawing.Color.Red;
+            this.button_chart_Stop.Location = new System.Drawing.Point(218, 382);
             this.button_chart_Stop.Name = "button_chart_Stop";
             this.button_chart_Stop.Size = new System.Drawing.Size(93, 35);
             this.button_chart_Stop.TabIndex = 2;
             this.button_chart_Stop.Text = "STOP";
-            this.button_chart_Stop.UseVisualStyleBackColor = true;
+            this.button_chart_Stop.UseVisualStyleBackColor = false;
             this.button_chart_Stop.Click += new System.EventHandler(this.button_chart_Stop_Click);
             // 
             // button_chart_Start
             // 
-            this.button_chart_Start.Location = new System.Drawing.Point(32, 383);
+            this.button_chart_Start.BackColor = System.Drawing.Color.ForestGreen;
+            this.button_chart_Start.Location = new System.Drawing.Point(89, 382);
             this.button_chart_Start.Name = "button_chart_Start";
             this.button_chart_Start.Size = new System.Drawing.Size(93, 35);
             this.button_chart_Start.TabIndex = 1;
             this.button_chart_Start.Text = "START";
-            this.button_chart_Start.UseVisualStyleBackColor = true;
+            this.button_chart_Start.UseVisualStyleBackColor = false;
             this.button_chart_Start.Click += new System.EventHandler(this.button_chart_Start_Click);
             // 
             // chart1
             // 
-            chartArea3.AxisX.LabelStyle.Format = "0.0";
-            chartArea3.AxisX.Maximum = 10D;
-            chartArea3.AxisX.Minimum = 0D;
-            chartArea3.AxisY.Interval = 20D;
-            chartArea3.AxisY.Maximum = 200D;
-            chartArea3.AxisY.Minimum = 0D;
-            chartArea3.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            this.chart1.Legends.Add(legend3);
-            this.chart1.Location = new System.Drawing.Point(-4, 0);
+            chartArea2.AxisX.LabelStyle.Format = "0.0";
+            chartArea2.AxisX.Maximum = 10D;
+            chartArea2.AxisX.Minimum = 0D;
+            chartArea2.AxisY.Interval = 20D;
+            chartArea2.AxisY.Maximum = 200D;
+            chartArea2.AxisY.Minimum = 0D;
+            chartArea2.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chart1.Legends.Add(legend2);
+            this.chart1.Location = new System.Drawing.Point(-9, 0);
             this.chart1.Name = "chart1";
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series3.Legend = "Legend1";
-            series3.Name = "Series1";
-            this.chart1.Series.Add(series3);
-            this.chart1.Size = new System.Drawing.Size(528, 373);
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Legend = "Legend1";
+            series2.Name = "Output value";
+            this.chart1.Series.Add(series2);
+            this.chart1.Size = new System.Drawing.Size(544, 373);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
             // 
@@ -442,7 +444,7 @@
             // label_type_of_control
             // 
             this.label_type_of_control.AutoSize = true;
-            this.label_type_of_control.Location = new System.Drawing.Point(194, 101);
+            this.label_type_of_control.Location = new System.Drawing.Point(186, 98);
             this.label_type_of_control.Name = "label_type_of_control";
             this.label_type_of_control.Size = new System.Drawing.Size(0, 13);
             this.label_type_of_control.TabIndex = 16;
@@ -450,7 +452,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(104, 101);
+            this.label8.Location = new System.Drawing.Point(96, 98);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(84, 13);
             this.label8.TabIndex = 15;
@@ -463,7 +465,7 @@
             this.textBox_One_LED.Name = "textBox_One_LED";
             this.textBox_One_LED.Size = new System.Drawing.Size(61, 20);
             this.textBox_One_LED.TabIndex = 14;
-            this.textBox_One_LED.Text = "0";
+            this.textBox_One_LED.Text = "2";
             // 
             // textBox_Both_LEDs
             // 
@@ -472,7 +474,7 @@
             this.textBox_Both_LEDs.Name = "textBox_Both_LEDs";
             this.textBox_Both_LEDs.Size = new System.Drawing.Size(61, 20);
             this.textBox_Both_LEDs.TabIndex = 13;
-            this.textBox_Both_LEDs.Text = "0";
+            this.textBox_Both_LEDs.Text = "2";
             // 
             // label7
             // 
@@ -505,7 +507,7 @@
             // 
             this.button_One.Location = new System.Drawing.Point(266, 35);
             this.button_One.Name = "button_One";
-            this.button_One.Size = new System.Drawing.Size(77, 41);
+            this.button_One.Size = new System.Drawing.Size(100, 40);
             this.button_One.TabIndex = 9;
             this.button_One.Text = "ONE LED";
             this.button_One.UseVisualStyleBackColor = true;
@@ -513,9 +515,9 @@
             // 
             // button_Both
             // 
-            this.button_Both.Location = new System.Drawing.Point(171, 35);
+            this.button_Both.Location = new System.Drawing.Point(151, 35);
             this.button_Both.Name = "button_Both";
-            this.button_Both.Size = new System.Drawing.Size(77, 41);
+            this.button_Both.Size = new System.Drawing.Size(100, 40);
             this.button_Both.TabIndex = 8;
             this.button_Both.Text = "BOTH LEDS";
             this.button_Both.UseVisualStyleBackColor = true;
@@ -573,26 +575,30 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(35, 140);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(131, 13);
+            this.label1.Size = new System.Drawing.Size(129, 13);
             this.label1.TabIndex = 2;
-            this.label1.Text = "BOTH LEDS SET_POINT";
+            this.label1.Text = "BOTH LEDs SET_POINT";
             // 
             // trackBar_One_LED
             // 
             this.trackBar_One_LED.Location = new System.Drawing.Point(17, 297);
-            this.trackBar_One_LED.Maximum = 125;
+            this.trackBar_One_LED.Maximum = 110;
+            this.trackBar_One_LED.Minimum = 2;
             this.trackBar_One_LED.Name = "trackBar_One_LED";
             this.trackBar_One_LED.Size = new System.Drawing.Size(450, 45);
             this.trackBar_One_LED.TabIndex = 1;
+            this.trackBar_One_LED.Value = 2;
             this.trackBar_One_LED.Scroll += new System.EventHandler(this.trackBar_One_LED_Scroll);
             // 
             // trackBar_Both_LEDs
             // 
             this.trackBar_Both_LEDs.Location = new System.Drawing.Point(17, 156);
             this.trackBar_Both_LEDs.Maximum = 180;
+            this.trackBar_Both_LEDs.Minimum = 2;
             this.trackBar_Both_LEDs.Name = "trackBar_Both_LEDs";
             this.trackBar_Both_LEDs.Size = new System.Drawing.Size(450, 45);
             this.trackBar_Both_LEDs.TabIndex = 0;
+            this.trackBar_Both_LEDs.Value = 2;
             this.trackBar_Both_LEDs.Scroll += new System.EventHandler(this.trackBar_Both_LEDs_Scroll);
             // 
             // MainForm
