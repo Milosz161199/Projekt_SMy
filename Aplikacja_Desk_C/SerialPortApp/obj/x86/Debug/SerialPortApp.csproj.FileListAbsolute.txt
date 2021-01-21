@@ -8,3 +8,13 @@ C:\Users\Milosz\Desktop\DOT_NET_APP_DEMO-main\SerialPortApp\obj\x86\Debug\Serial
 C:\Users\Milosz\Desktop\DOT_NET_APP_DEMO-main\SerialPortApp\obj\x86\Debug\SerialPortApp.csproj.CoreCompileInputs.cache
 C:\Users\Milosz\Desktop\DOT_NET_APP_DEMO-main\SerialPortApp\obj\x86\Debug\SerialPortApp.exe
 C:\Users\Milosz\Desktop\DOT_NET_APP_DEMO-main\SerialPortApp\obj\x86\Debug\SerialPortApp.pdb
+C:\Users\Milosz\STM32CubeIDE\workspace_1.4.0\Projekt_STM32\Aplikacja_Desk_C\SerialPortApp\bin\Debug\SerialPortApp.exe.config
+C:\Users\Milosz\STM32CubeIDE\workspace_1.4.0\Projekt_STM32\Aplikacja_Desk_C\SerialPortApp\bin\Debug\SerialPortApp.exe
+C:\Users\Milosz\STM32CubeIDE\workspace_1.4.0\Projekt_STM32\Aplikacja_Desk_C\SerialPortApp\bin\Debug\SerialPortApp.pdb
+C:\Users\Milosz\STM32CubeIDE\workspace_1.4.0\Projekt_STM32\Aplikacja_Desk_C\SerialPortApp\obj\x86\Debug\SerialPortApp.csprojAssemblyReference.cache
+C:\Users\Milosz\STM32CubeIDE\workspace_1.4.0\Projekt_STM32\Aplikacja_Desk_C\SerialPortApp\obj\x86\Debug\SerialPortApp.MainForm.resources
+C:\Users\Milosz\STM32CubeIDE\workspace_1.4.0\Projekt_STM32\Aplikacja_Desk_C\SerialPortApp\obj\x86\Debug\SerialPortApp.Properties.Resources.resources
+C:\Users\Milosz\STM32CubeIDE\workspace_1.4.0\Projekt_STM32\Aplikacja_Desk_C\SerialPortApp\obj\x86\Debug\SerialPortApp.csproj.GenerateResource.cache
+C:\Users\Milosz\STM32CubeIDE\workspace_1.4.0\Projekt_STM32\Aplikacja_Desk_C\SerialPortApp\obj\x86\Debug\SerialPortApp.csproj.CoreCompileInputs.cache
+C:\Users\Milosz\STM32CubeIDE\workspace_1.4.0\Projekt_STM32\Aplikacja_Desk_C\SerialPortApp\obj\x86\Debug\SerialPortApp.exe
+C:\Users\Milosz\STM32CubeIDE\workspace_1.4.0\Projekt_STM32\Aplikacja_Desk_C\SerialPortApp\obj\x86\Debug\SerialPortApp.pdb

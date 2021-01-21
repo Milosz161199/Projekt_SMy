@@ -1,27 +1,31 @@
-/*
- *
- * Sensor BH1750 - odczyt natezenia swiatla za pomoca interfejsu I2C
- * Inicjalizacja/konfiguracja czujnika oraz odczyt pomiaru wywazony w luksach
- *
- * */
+/**
+  ******************************************************************************
+  * @file    sensor_bh1750.h
+  * @author  Milosz Plutowski
+  * @version V1.0
+  * @date    21-Jan-2021
+  * @brief   Simple BH1750 driver library for STM32F7.
+  *
+  ******************************************************************************
+  */
 
 #ifndef INC_BH1750_H_
 #define INC_BH1750_H_
 
-/* Include  */
+/* Include -------------------------------------------------------------------*/
 #include "stm32f7xx_hal.h"
 
 /* Typedef  */
 #define BH1750_I2CType I2C_HandleTypeDef*
 
-/* New Struct Define */
+/* New Struct Define ---------------------------------------------------------*/
 typedef struct{
-	BH1750_I2CType I2C;  //interfejs z jaki pracujemy
-	uint8_t Address;  //adres
-	uint8_t Timeout; //opoznienie
-} BH1750_HandleTypeDef; // dedykowany typ zmiennej dla czujnika BH1750
+	BH1750_I2CType I2C;
+	uint8_t Address;
+	uint8_t Timeout;
+} BH1750_HandleTypeDef;
 
-/* Define */
+/* Define -------------------------------------------------------------------*/
 #define BH1750_ADDRESS_L (0x23 << 1) // ADDR = 'L'
 #define BH1750_ADDRESS_H (0x5C << 1) // ADDR = 'H'
 
@@ -35,9 +39,20 @@ typedef struct{
 #define BH1750_ONE_TIME_H_RES_MODE2     0x21
 #define BH1750_ONE_TIME_L_RES_MODE      0x23
 
-/* Public function declaration */
-void SENSOR_BH1750_Init(BH1750_HandleTypeDef* hbh1750);  // deklaracja funkcji inicjalizujacej dany sensor
-float SENSOR_BH1750_ReadLux (BH1750_HandleTypeDef* hbh1750); // deklaracja funkcji do odczytu pomiaru w luksach
+/* Public function declaration -----------------------------------------------*/
+/*
+ * @brief BH1750 initialization procedure.
+ * @param[in] hbh1750 BH1750 handler
+ * @return None
+ */
+void SENSOR_BH1750_Init(BH1750_HandleTypeDef* hbh1750);
+
+/*
+ * @brief BH1750 measurement reading procedure.
+ * @param[in] hbh1750 BH1750 handler
+ * @return float light in lux
+ */
+float SENSOR_BH1750_ReadLux (BH1750_HandleTypeDef* hbh1750);
 
 
 #endif

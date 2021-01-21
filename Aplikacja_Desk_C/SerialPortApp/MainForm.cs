@@ -16,6 +16,7 @@ using SerialPortApp.Serial;
 using System.Globalization;
 using System.Diagnostics;
 
+
 namespace SerialPortApp
 {
     /*
@@ -35,16 +36,36 @@ namespace SerialPortApp
         #region Fields
 
         SerialPortManager _spManager; /** Custom serial port manager class object. */
-        const int _spMsgSize = 3;
-        UInt16 _outValue_Both_LEDs;
-        UInt16 _outValue_One_LED;
-        bool picked_type_of_control_One_LED = true;
-        bool picked_type_of_control_Both_LEDs = false;
+        const int _spMsgSize = 3;     // size of serial port message
+
+        /* RAGE OF CONTROL */
+        int min_val = 2;              // [lux]
+        int max_val = 110;            // [lux]
+
+        /* TYPE OF CONTROL */
+        bool picked_type_of_control_One_LED = true;     // just one LED
+        bool picked_type_of_control_Both_LEDs = false;  // both of LEDs
+
+        // control set vaule and control error
+        int set_val = 2;              // [lux]
+        float error_val = 0.0f;       // [%]
+
+        // Set vaule from track bar scroll
+        UInt16 _setValue_One_LED;     // just one LED
+        UInt16 _setValue_Both_LEDs;   // both of LEDs
+
+        // Control output value as a string
         string _outValue_Str;
 
+        // Variables for drawing chart
         double _plotTimeStep = 0.1;       // [s]
         double _plotTime = 0.0;           // [s]
         const double _plotTimeMax = 10.0; // [s]
+
+        // Variables for file operations
+        bool send_just_text = true;
+        string path_to_csv_file = "C:/Users/Milosz/STM32CubeIDE/workspace_1.4.0/Projekt_STM32/Aplikacja_Desk_C/SerialPortApp/bin/x64/Debug";
+        string file_name = "data.csv";
 
         #endregion
 
@@ -244,21 +265,31 @@ namespace SerialPortApp
 
         #endregion
 
+        /* 
+         * Output control to both LEDs track bar scroll event method 
+         * @param sender - contains a reference to the control/object
+         * @param e - contains the event data           
+         */
         private void trackBar_Both_LEDs_Scroll(object sender, EventArgs e)
         {
             if (picked_type_of_control_Both_LEDs) {
                 TrackBar trackBar = (TrackBar)sender;
-                _outValue_Both_LEDs = (UInt16)trackBar.Value;
-                textBox_Both_LEDs.Text = _outValue_Both_LEDs.ToString();
+                _setValue_Both_LEDs = (UInt16)trackBar.Value;
+                textBox_Both_LEDs.Text = _setValue_Both_LEDs.ToString();
             }
         }
 
+        /* 
+         * Output control to one LED track bar scroll event method 
+         * @param sender - contains a reference to the control/object
+         * @param e - contains the event data           
+         */
         private void trackBar_One_LED_Scroll(object sender, EventArgs e)
         {
             if (picked_type_of_control_One_LED) { 
                 TrackBar trackBar = (TrackBar)sender;
-                _outValue_One_LED = (UInt16)trackBar.Value;
-                textBox_One_LED.Text = _outValue_One_LED.ToString();
+                _setValue_One_LED = (UInt16)trackBar.Value;
+                textBox_One_LED.Text = _setValue_One_LED.ToString();
             }
         }
 
@@ -270,7 +301,8 @@ namespace SerialPortApp
         private void button_set_point_both_LED_Click(object sender, EventArgs e)
         {
             if (picked_type_of_control_Both_LEDs) {
-                _spManager.Send(_outValue_Both_LEDs.ToString("X3"));
+                _spManager.Send(_setValue_Both_LEDs.ToString("X3"));
+                set_val = _setValue_Both_LEDs;
             }
         }
 
@@ -283,12 +315,13 @@ namespace SerialPortApp
         {
             if (picked_type_of_control_One_LED)
             {
-                _spManager.Send(_outValue_One_LED.ToString("X3"));
+                _spManager.Send(_setValue_One_LED.ToString("X3"));
+                set_val = _setValue_One_LED;
             }
         }
 
         /*
-         * Picked type of controling - Both LEDs
+         * Picked type of control - Both LEDs
          * @param sender - contains a reference to the control/object
          * @param e - contains the event data
          */
@@ -300,10 +333,11 @@ namespace SerialPortApp
             label_type_of_control.Text = "You are controling both of LEDs.";
             this.button_Both.BackColor = System.Drawing.Color.Blue;
             this.button_One.BackColor = System.Drawing.Color.Gray;
+            max_val = 180;
         }
 
         /*
-         * Picked type of controling - One LED
+         * Picked type of control - One LED
          * @param sender - contains a reference to the control/object
          * @param e - contains the event data
          */
@@ -315,6 +349,7 @@ namespace SerialPortApp
             label_type_of_control.Text = "You are controling just one LED.";
             this.button_Both.BackColor = System.Drawing.Color.Gray;
             this.button_One.BackColor = System.Drawing.Color.Blue;
+            max_val = 110;
         }
 
         /*
@@ -326,6 +361,8 @@ namespace SerialPortApp
         {
             RxTextBoxDisable();
             _spManager.NewSerialDataRecieved += new EventHandler<SerialDataEventArgs>(_spManager_NewPlotDataRecieved);
+            this.button_chart_Start.BackColor = System.Drawing.Color.Green;
+            this.button_chart_Stop.BackColor = System.Drawing.Color.Gray;
         }
 
         /*
@@ -336,11 +373,64 @@ namespace SerialPortApp
         private void button_chart_Stop_Click(object sender, EventArgs e)
         {
             chart1.Series[0].Points.Clear();
+            send_just_text = true;
             // Add empty point to make chart visible before first sample arrived
             chart1.Series[0].Points.AddXY(double.NaN, double.NaN);
             chart1.ChartAreas[0].AxisX.Minimum = 0;
             chart1.ChartAreas[0].AxisX.Maximum = _plotTimeMax;
+            _plotTime = 0;
             _spManager.NewSerialDataRecieved -= new EventHandler<SerialDataEventArgs>(_spManager_NewPlotDataRecieved);
+            this.button_chart_Start.BackColor = System.Drawing.Color.Gray;
+            this.button_chart_Stop.BackColor = System.Drawing.Color.Red;
+        }
+
+        /*
+         * Calculat the control error value as a percentage 
+         * @param min - contains a control min value 
+         * @param max - contains a control max value
+         * @param set - contains a set value of control
+         * @param ou1 - contains a output value of control
+         * @return control error value as a percentage 
+         */
+        private float _errorValInPercent(int min, int max, int set, float out1)
+        {
+            float result = 0.0f;
+
+            result = (System.Math.Abs(set - out1) / (max - min)) * 100;
+
+            return result;
+        }
+
+        /* 
+         * Send data to csv file 
+         * 
+         * @param out_val - out vaule of control
+         * @param set_val - set value of control
+         * @param error_val - error of PID control
+         * @param t - time of measurements in senconds 
+         * @param path - path to csv file  
+         * @param name - csv file name 
+         */
+        private void _saveDataToCsvFile(double t, int set_val, double out_val, float error_val, string path, string name)
+        {
+            // Open file
+            System.IO.StreamWriter writer = new System.IO.StreamWriter(path + "/" + name, true);
+            if (writer != null)
+            {
+                if (send_just_text)
+                {
+                    // File header
+                    DateTime Date = DateTime.Now;
+                    writer.WriteLine(@"");
+                    writer.WriteLine(@"Measurements of {0}", Date);
+                    writer.WriteLine(@"Time [s];Set Value [lux];Output Value [lux];Error Value [%]");
+                    send_just_text = false;
+                }
+                else
+                    writer.WriteLine(@"{0};{1};{2};{3}", t, set_val, out_val, error_val);
+                // Close file
+                writer.Close();
+            }
         }
 
         /*
@@ -379,6 +469,9 @@ namespace SerialPortApp
                     }
 
                     chart1.Series[0].Points.AddXY(_plotTime, outValue);
+                    error_val = _errorValInPercent(min_val, max_val, set_val, (float)outValue);
+                    textBox_Error.Text = error_val.ToString();
+                    _saveDataToCsvFile(_plotTime, set_val, outValue, error_val, path_to_csv_file, file_name);
                     _plotTime += _plotTimeStep;
                 }
                 catch(Exception ex)

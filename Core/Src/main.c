@@ -42,10 +42,10 @@ typedef enum {FALSE = 0, TRUE} bool;
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-uint8_t enc_counter_max = 110;
 #define enc_counter_min     2
 #define enc_counter_step    1
 
+// size of message
 #define SP_MSG_SIZE 3
 
 /* Choose PID parameters */
@@ -63,21 +63,25 @@ uint8_t enc_counter_max = 110;
 
 /* USER CODE BEGIN PV */
 
+uint8_t enc_counter_max = 110;
+
+// Instance of PID
 arm_pid_instance_f32 pid;
 
-float32_t LED_lux = 0.0f;
 uint32_t set_point = 0.0f;
+uint32_t LED_lux_int = 0;
+uint32_t enc_counter = enc_counter_min;
+
+float32_t LED_lux = 0.0f;
 float32_t PID_out = 0.0f;
 float32_t PID_error = 0.0f;
 float32_t PID_error_in_procent = 0.0f;
 float32_t d_PWM = 0.0f;
-uint32_t LED_lux_int = 0;
 
-bool BTN_State_1 = FALSE;
-bool LCD_show_ERROR = FALSE;
-uint32_t enc_counter = enc_counter_min;
+bool BTN_State_1 = FALSE;      // toggle to switch number of LEDs
+bool LCD_show_ERROR = FALSE;   // toggle to switch screens on lcd
 
-// Komunikacja USART3
+// USART3
 uint8_t tx_n;
 uint8_t tx_buffer[50];
 uint8_t RX_DATA[SP_MSG_SIZE + 1];
@@ -96,37 +100,37 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance == TIM2)
 	{
-		// Odczyt sensora i zapis odczytanej wartości do zmiennej LED_lux
+		// reading from the sensor and writing the value to the variable LED_lux
 		LED_lux = SENSOR_BH1750_ReadLux(&hbh1750_1);
-		// konwersja float32_t na uint32_t
+		// convert float32_t to uint32_t
 		LED_lux_int = (uint32_t)LED_lux;
 		tx_n = sprintf(tx_buffer, "%03x", LED_lux_int);
-		// wysłanie wiadomości pod określonym warunkiem
+		// send a message if the condition is true
 		if(tx_n == SP_MSG_SIZE )
 			 HAL_UART_Transmit(&huart3, (uint8_t*)tx_buffer, tx_n, 1);
 
 
-		// wejście regulatora PID
+		/* CONTROL PROCESS PID */
 		PID_error = set_point - LED_lux;
-		PID_error_in_procent = (fabs(PID_error)/(enc_counter_max - enc_counter_min))*100;
+		PID_error_in_procent = (fabs(PID_error) / (enc_counter_max - enc_counter_min)) * 100;
 		PID_out = arm_pid_f32(&pid, PID_error);
 
 
-		// Dodatkowa sygnalizacja poprawności układu regulacji
+		// Additional visualization of the correctness of the regulation system
 		if(PID_error_in_procent <= 1.0 )
 		{
-			// zakończy powodzeniem załącz diodę zieloną
+			// if correct turn green LED (LD1) on and turn red LED (LD3) off
 			HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, GPIO_PIN_SET);
 			HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
 		}
 		else
 		{
-			// w innym przypadku załącz diodę czerwoną
+			// if not correct turn green LED (LD1) off and turn red LED (LD3) on
 			HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
 			HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, GPIO_PIN_RESET);
 		}
 
-
+		// Output saturation
 		if(PID_out > 1000)
 		{
 			d_PWM = 1000;
@@ -140,7 +144,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			d_PWM = PID_out;
 		}
 
-		// sterowanie wypełnieniem diod LED
+		// PWM filling control of diodes
 		if(BTN_State_1)
 		{
 			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, d_PWM);
@@ -156,7 +160,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	if(GPIO_Pin == ENC_CLK_Pin) // Impulsator obrotowy
+	if(GPIO_Pin == ENC_CLK_Pin) // Rotary pulser for setting the value of control 'set_point'
 	{
 		 if (HAL_GPIO_ReadPin(ENC_DT_GPIO_Port, ENC_DT_Pin) == GPIO_PIN_RESET)
 		 {
@@ -169,13 +173,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			 set_point = enc_counter;
 		 }
 	}
-	else if(GPIO_Pin == EX1_Btn_Pin) // przycisk, do przełączania liczby sterowanych diod
+	else if(GPIO_Pin == EX1_Btn_Pin) // button for switching the number of LEDs
 	{
 		BTN_State_1 = !BTN_State_1;
 		if(BTN_State_1 == TRUE)
 		{
 			enc_counter_max = 180;
-
 		}
 		else
 		{
@@ -186,7 +189,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			}
 		}
 	}
-	else if(GPIO_Pin == EX2_Btn_Pin)  // przycisk, do przełączania ekranu w lcd
+	else if(GPIO_Pin == EX2_Btn_Pin)  // button to switch the lcd screen
 	{
 		LCD_show_ERROR = !LCD_show_ERROR;
 	}
@@ -214,6 +217,10 @@ void HAL_UART_RxCpltCallback( UART_HandleTypeDef *huart )
 		else if( RX_DATA[0] == 'O' && RX_DATA[1] == 'N' && RX_DATA[2] == 'E' ){
 			BTN_State_1 = FALSE;
 			enc_counter_max = 110;
+			if(set_point > enc_counter_max)
+			{
+				set_point = enc_counter_max;
+			}
 		}
 		/* Start listening for the next message . */
 		HAL_UART_Receive_IT(&huart3, RX_DATA, SP_MSG_SIZE);
@@ -257,36 +264,37 @@ int main(void)
   MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
 
-  // Inicjalizacja sensora
+  // Sensor init
   SENSOR_BH1750_Init(&hbh1750_1);
 
-  // Początkowe wartości
+  // Starting values
   LED_lux = 2.0f;
   set_point = 2.0;
 
-  // Obsługa regulatora PID
-  // Ustawianie parametrów regulatora PID
+  /****  PID  ****/
+  // Set the PID parameters
   pid.Kp = PID_PARAM_KP;
   pid.Ki = PID_PARAM_KI;
   pid.Kd = PID_PARAM_KD;
-
+  // Init PID with constant period
   arm_pid_init_f32(&pid, 1);
   __HAL_TIM_SET_AUTORELOAD(&htim2, 129999);
   HAL_TIM_Base_Start_IT(&htim2);
 
 
-  // Inicjalizajca kanałów PWM timera TIM3
+  // Init PWM channels of TIM3
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
 
-  // Inicjalizacja lcd
+  // Init lcd
   LCD_Init(&hlcd1);
 
-  // Wyświetlanie danych na Lcd co 10ms
-  //HAL_TIM_Base_Start_IT(&htim7);
+  // Data display on lcd every 10ms
   //__HAL_TIM_SET_AUTORELOAD(&htim7, 9999);
+  //HAL_TIM_Base_Start_IT(&htim7);
 
-  // Port szeregowy USART3
+
+  // USART3
   HAL_UART_Receive_IT(&huart3, RX_DATA, SP_MSG_SIZE);
 
   /* USER CODE END 2 */

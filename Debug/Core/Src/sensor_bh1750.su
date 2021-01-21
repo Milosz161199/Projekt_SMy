@@ -1,2 +1,2 @@
-sensor_bh1750.c:6:6:SENSOR_BH1750_Init	32	static
-sensor_bh1750.c:17:7:SENSOR_BH1750_ReadLux	40	static
+sensor_bh1750.c:22:6:SENSOR_BH1750_Init	32	static
+sensor_bh1750.c:38:7:SENSOR_BH1750_ReadLux	40	static
