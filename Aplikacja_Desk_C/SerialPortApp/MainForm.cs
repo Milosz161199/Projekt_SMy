@@ -38,6 +38,7 @@ namespace SerialPortApp
         SerialPortManager _spManager; /** Custom serial port manager class object. */
         const int _spMsgSize = 3;     // size of serial port message
 
+
         /* RAGE OF CONTROL */
         int min_val = 2;              // [lux]
         int max_val = 110;            // [lux]
@@ -47,12 +48,13 @@ namespace SerialPortApp
         bool picked_type_of_control_Both_LEDs = false;  // both of LEDs
 
         // control set vaule and control error
-        int set_val = 2;              // [lux]
-        float error_val = 0.0f;       // [%]
+        UInt16 set_val = 2;              // [lux]
+        float error_val = 0.0f;          // [%]
+        double outValue = 0.0;           // [lux]
 
         // Set vaule from track bar scroll
-        UInt16 _setValue_One_LED;     // just one LED
-        UInt16 _setValue_Both_LEDs;   // both of LEDs
+        UInt16 _setValue_One_LED;        // just one LED
+        UInt16 _setValue_Both_LEDs;      // both of LEDs
 
         // Control output value as a string
         string _outValue_Str;
@@ -321,7 +323,7 @@ namespace SerialPortApp
         }
 
         /*
-         * Picked type of control - Both LEDs
+         * Picked type of control 'BOTH LEDS' - Both LEDs
          * @param sender - contains a reference to the control/object
          * @param e - contains the event data
          */
@@ -337,7 +339,7 @@ namespace SerialPortApp
         }
 
         /*
-         * Picked type of control - One LED
+         * Picked type of control 'ONE LED' - One LED
          * @param sender - contains a reference to the control/object
          * @param e - contains the event data
          */
@@ -374,6 +376,7 @@ namespace SerialPortApp
         {
             chart1.Series[0].Points.Clear();
             send_just_text = true;
+            //req_for_set_val = false;
             // Add empty point to make chart visible before first sample arrived
             chart1.Series[0].Points.AddXY(double.NaN, double.NaN);
             chart1.ChartAreas[0].AxisX.Minimum = 0;
@@ -396,22 +399,36 @@ namespace SerialPortApp
         {
             float result = 0.0f;
 
-            result = (System.Math.Abs(set - out1) / (max - min)) * 100;
+            if ((max - min) != 0)
+                result = (System.Math.Abs(set - out1) / (max - min)) * 100;
+            else
+                result = -1;
 
             return result;
         }
 
+        /*
+         * Error control 'SHOW ERROR' button click event method for calculate error
+         * @param sender - contains a reference to the control/object
+         * @param e - contains the event data
+         */
+        private void button_show_error_Click(object sender, EventArgs e)
+        {
+            error_val = _errorValInPercent(min_val, max_val, set_val, (float)outValue);
+            textBox_Error.Text = error_val.ToString();
+        }
+
         /* 
          * Send data to csv file 
-         * 
-         * @param out_val - out vaule of control
+         * @param t - time of measurements in senconds
          * @param set_val - set value of control
-         * @param error_val - error of PID control
-         * @param t - time of measurements in senconds 
+         * @param out_val - out vaule of control
+         * @param max - max values of control
+         * @param min - min values of control
          * @param path - path to csv file  
          * @param name - csv file name 
          */
-        private void _saveDataToCsvFile(double t, int set_val, double out_val, float error_val, string path, string name)
+        private void _saveDataToCsvFile(double t, int set_val, double out_val, int max, int min, string path, string name)
         {
             // Open file
             System.IO.StreamWriter writer = new System.IO.StreamWriter(path + "/" + name, true);
@@ -423,11 +440,11 @@ namespace SerialPortApp
                     DateTime Date = DateTime.Now;
                     writer.WriteLine(@"");
                     writer.WriteLine(@"Measurements of {0}", Date);
-                    writer.WriteLine(@"Time [s];Set Value [lux];Output Value [lux];Error Value [%]");
+                    writer.WriteLine(@"Time [s];Set Value [lux];Output Value [lux];Max Value [lux];Min Value [lux]");
                     send_just_text = false;
                 }
                 else
-                    writer.WriteLine(@"{0};{1};{2};{3}", t, set_val, out_val, error_val);
+                    writer.WriteLine(@"{0};{1};{2};{3};{4}", t, set_val, out_val, max, min);
                 // Close file
                 writer.Close();
             }
@@ -457,9 +474,9 @@ namespace SerialPortApp
                 {
                     // parse first message as hex value
                     UInt16 reg = UInt16.Parse(_outValue_Str.Substring(0, _spMsgSize), NumberStyles.HexNumber);
-                    _outValue_Str = _outValue_Str.Remove(0, _spMsgSize);
+                     _outValue_Str = _outValue_Str.Remove(0, _spMsgSize);
 
-                    double outValue = reg;
+                    outValue = reg;
 
                     if (_plotTime > _plotTimeMax)
                     {
@@ -469,9 +486,8 @@ namespace SerialPortApp
                     }
 
                     chart1.Series[0].Points.AddXY(_plotTime, outValue);
-                    error_val = _errorValInPercent(min_val, max_val, set_val, (float)outValue);
-                    textBox_Error.Text = error_val.ToString();
-                    _saveDataToCsvFile(_plotTime, set_val, outValue, error_val, path_to_csv_file, file_name);
+
+                    _saveDataToCsvFile(_plotTime, set_val, outValue, max_val, min_val, path_to_csv_file, file_name);
                     _plotTime += _plotTimeStep;
                 }
                 catch(Exception ex)
@@ -480,5 +496,6 @@ namespace SerialPortApp
                 }
             }
         }
+
     }
 }

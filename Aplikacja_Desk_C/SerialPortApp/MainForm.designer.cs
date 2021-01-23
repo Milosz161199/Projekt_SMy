@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.baudRateLabel = new System.Windows.Forms.Label();
             this.dataBitsLabel = new System.Windows.Forms.Label();
             this.parityLabel = new System.Windows.Forms.Label();
@@ -58,6 +58,7 @@
             this.tabMain = new System.Windows.Forms.TabControl();
             this.tabSerialPort = new System.Windows.Forms.TabPage();
             this.tabInput = new System.Windows.Forms.TabPage();
+            this.button_show_error = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.textBox_Error = new System.Windows.Forms.TextBox();
@@ -359,6 +360,7 @@
             // 
             // tabInput
             // 
+            this.tabInput.Controls.Add(this.button_show_error);
             this.tabInput.Controls.Add(this.label10);
             this.tabInput.Controls.Add(this.label9);
             this.tabInput.Controls.Add(this.textBox_Error);
@@ -373,6 +375,16 @@
             this.tabInput.TabIndex = 1;
             this.tabInput.Text = "Input plot";
             this.tabInput.UseVisualStyleBackColor = true;
+            // 
+            // button_show_error
+            // 
+            this.button_show_error.Location = new System.Drawing.Point(396, 361);
+            this.button_show_error.Name = "button_show_error";
+            this.button_show_error.Size = new System.Drawing.Size(104, 23);
+            this.button_show_error.TabIndex = 17;
+            this.button_show_error.Text = "SHOW ERROR";
+            this.button_show_error.UseVisualStyleBackColor = true;
+            this.button_show_error.Click += new System.EventHandler(this.button_show_error_Click);
             // 
             // label10
             // 
@@ -404,7 +416,7 @@
             // button_chart_Stop
             // 
             this.button_chart_Stop.BackColor = System.Drawing.Color.Gray;
-            this.button_chart_Stop.Location = new System.Drawing.Point(218, 382);
+            this.button_chart_Stop.Location = new System.Drawing.Point(218, 380);
             this.button_chart_Stop.Name = "button_chart_Stop";
             this.button_chart_Stop.Size = new System.Drawing.Size(93, 35);
             this.button_chart_Stop.TabIndex = 2;
@@ -415,7 +427,7 @@
             // button_chart_Start
             // 
             this.button_chart_Start.BackColor = System.Drawing.Color.Gray;
-            this.button_chart_Start.Location = new System.Drawing.Point(89, 382);
+            this.button_chart_Start.Location = new System.Drawing.Point(89, 380);
             this.button_chart_Start.Name = "button_chart_Start";
             this.button_chart_Start.Size = new System.Drawing.Size(93, 35);
             this.button_chart_Start.TabIndex = 1;
@@ -426,25 +438,25 @@
             // chart1
             // 
             this.chart1.BackImageAlignment = System.Windows.Forms.DataVisualization.Charting.ChartImageAlignmentStyle.BottomLeft;
-            chartArea2.AxisX.LabelStyle.Format = "0.0";
-            chartArea2.AxisX.Maximum = 10D;
-            chartArea2.AxisX.Minimum = 0D;
-            chartArea2.AxisX.Title = "Time [s]";
-            chartArea2.AxisY.Interval = 20D;
-            chartArea2.AxisY.Maximum = 200D;
-            chartArea2.AxisY.Minimum = 0D;
-            chartArea2.AxisY.Title = "Light intensity [lux]";
-            chartArea2.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chart1.Legends.Add(legend2);
+            chartArea1.AxisX.LabelStyle.Format = "0.0";
+            chartArea1.AxisX.Maximum = 10D;
+            chartArea1.AxisX.Minimum = 0D;
+            chartArea1.AxisX.Title = "Time [s]";
+            chartArea1.AxisY.Interval = 20D;
+            chartArea1.AxisY.Maximum = 200D;
+            chartArea1.AxisY.Minimum = 0D;
+            chartArea1.AxisY.Title = "Light intensity [lux]";
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(-9, 0);
             this.chart1.Name = "chart1";
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series2.Legend = "Legend1";
-            series2.Name = "Output value";
-            this.chart1.Series.Add(series2);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Legend = "Legend1";
+            series1.Name = "Output value";
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(559, 373);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
@@ -723,6 +735,7 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox textBox_Error;
+        private System.Windows.Forms.Button button_show_error;
     }
 }
 
