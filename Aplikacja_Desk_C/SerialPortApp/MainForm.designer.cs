@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.baudRateLabel = new System.Windows.Forms.Label();
             this.dataBitsLabel = new System.Windows.Forms.Label();
             this.parityLabel = new System.Windows.Forms.Label();
@@ -83,6 +83,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.trackBar_One_LED = new System.Windows.Forms.TrackBar();
             this.trackBar_Both_LEDs = new System.Windows.Forms.TrackBar();
+            this.label11 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.serialSettingsBindingSource)).BeginInit();
             this.groupBox_settings.SuspendLayout();
             this.groupBox_receive.SuspendLayout();
@@ -360,6 +361,7 @@
             // 
             // tabInput
             // 
+            this.tabInput.Controls.Add(this.label11);
             this.tabInput.Controls.Add(this.button_show_error);
             this.tabInput.Controls.Add(this.label10);
             this.tabInput.Controls.Add(this.label9);
@@ -378,7 +380,8 @@
             // 
             // button_show_error
             // 
-            this.button_show_error.Location = new System.Drawing.Point(396, 361);
+            this.button_show_error.Enabled = false;
+            this.button_show_error.Location = new System.Drawing.Point(388, 389);
             this.button_show_error.Name = "button_show_error";
             this.button_show_error.Size = new System.Drawing.Size(104, 23);
             this.button_show_error.TabIndex = 17;
@@ -389,7 +392,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(434, 393);
+            this.label10.Location = new System.Drawing.Point(468, 421);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(27, 13);
             this.label10.TabIndex = 16;
@@ -398,16 +401,16 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(338, 393);
+            this.label9.Location = new System.Drawing.Point(385, 421);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(52, 13);
+            this.label9.Size = new System.Drawing.Size(49, 13);
             this.label9.TabIndex = 15;
-            this.label9.Text = "ERROR: ";
+            this.label9.Text = "ERROR:";
             // 
             // textBox_Error
             // 
             this.textBox_Error.Enabled = false;
-            this.textBox_Error.Location = new System.Drawing.Point(396, 390);
+            this.textBox_Error.Location = new System.Drawing.Point(435, 418);
             this.textBox_Error.Name = "textBox_Error";
             this.textBox_Error.Size = new System.Drawing.Size(32, 20);
             this.textBox_Error.TabIndex = 14;
@@ -416,7 +419,8 @@
             // button_chart_Stop
             // 
             this.button_chart_Stop.BackColor = System.Drawing.Color.Gray;
-            this.button_chart_Stop.Location = new System.Drawing.Point(218, 380);
+            this.button_chart_Stop.Enabled = false;
+            this.button_chart_Stop.Location = new System.Drawing.Point(218, 389);
             this.button_chart_Stop.Name = "button_chart_Stop";
             this.button_chart_Stop.Size = new System.Drawing.Size(93, 35);
             this.button_chart_Stop.TabIndex = 2;
@@ -427,7 +431,8 @@
             // button_chart_Start
             // 
             this.button_chart_Start.BackColor = System.Drawing.Color.Gray;
-            this.button_chart_Start.Location = new System.Drawing.Point(89, 380);
+            this.button_chart_Start.Enabled = false;
+            this.button_chart_Start.Location = new System.Drawing.Point(89, 389);
             this.button_chart_Start.Name = "button_chart_Start";
             this.button_chart_Start.Size = new System.Drawing.Size(93, 35);
             this.button_chart_Start.TabIndex = 1;
@@ -438,25 +443,25 @@
             // chart1
             // 
             this.chart1.BackImageAlignment = System.Windows.Forms.DataVisualization.Charting.ChartImageAlignmentStyle.BottomLeft;
-            chartArea1.AxisX.LabelStyle.Format = "0.0";
-            chartArea1.AxisX.Maximum = 10D;
-            chartArea1.AxisX.Minimum = 0D;
-            chartArea1.AxisX.Title = "Time [s]";
-            chartArea1.AxisY.Interval = 20D;
-            chartArea1.AxisY.Maximum = 200D;
-            chartArea1.AxisY.Minimum = 0D;
-            chartArea1.AxisY.Title = "Light intensity [lux]";
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chart1.Legends.Add(legend1);
+            chartArea5.AxisX.LabelStyle.Format = "0.0";
+            chartArea5.AxisX.Maximum = 10D;
+            chartArea5.AxisX.Minimum = 0D;
+            chartArea5.AxisX.Title = "Time [s]";
+            chartArea5.AxisY.Interval = 20D;
+            chartArea5.AxisY.Maximum = 200D;
+            chartArea5.AxisY.Minimum = 0D;
+            chartArea5.AxisY.Title = "Light intensity [lux]";
+            chartArea5.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea5);
+            legend5.Name = "Legend1";
+            this.chart1.Legends.Add(legend5);
             this.chart1.Location = new System.Drawing.Point(-9, 0);
             this.chart1.Name = "chart1";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.Legend = "Legend1";
-            series1.Name = "Output value";
-            this.chart1.Series.Add(series1);
+            series5.ChartArea = "ChartArea1";
+            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series5.Legend = "Legend1";
+            series5.Name = "Output value";
+            this.chart1.Series.Add(series5);
             this.chart1.Size = new System.Drawing.Size(559, 373);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
@@ -492,7 +497,7 @@
             // label_type_of_control
             // 
             this.label_type_of_control.AutoSize = true;
-            this.label_type_of_control.Location = new System.Drawing.Point(200, 98);
+            this.label_type_of_control.Location = new System.Drawing.Point(198, 96);
             this.label_type_of_control.Name = "label_type_of_control";
             this.label_type_of_control.Size = new System.Drawing.Size(0, 13);
             this.label_type_of_control.TabIndex = 16;
@@ -500,11 +505,11 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(110, 98);
+            this.label8.Location = new System.Drawing.Point(76, 96);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(84, 13);
+            this.label8.Size = new System.Drawing.Size(116, 13);
             this.label8.TabIndex = 15;
-            this.label8.Text = "Type of control: ";
+            this.label8.Text = "Picked type of control: ";
             // 
             // textBox_One_LED
             // 
@@ -545,7 +550,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(191, 19);
+            this.label5.Location = new System.Drawing.Point(187, 19);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(166, 13);
             this.label5.TabIndex = 10;
@@ -554,7 +559,7 @@
             // button_One
             // 
             this.button_One.BackColor = System.Drawing.Color.Gray;
-            this.button_One.Location = new System.Drawing.Point(280, 35);
+            this.button_One.Location = new System.Drawing.Point(276, 35);
             this.button_One.Name = "button_One";
             this.button_One.Size = new System.Drawing.Size(100, 40);
             this.button_One.TabIndex = 9;
@@ -565,7 +570,7 @@
             // button_Both
             // 
             this.button_Both.BackColor = System.Drawing.Color.Gray;
-            this.button_Both.Location = new System.Drawing.Point(165, 35);
+            this.button_Both.Location = new System.Drawing.Point(161, 35);
             this.button_Both.Name = "button_Both";
             this.button_Both.Size = new System.Drawing.Size(100, 40);
             this.button_Both.TabIndex = 8;
@@ -651,6 +656,15 @@
             this.trackBar_Both_LEDs.Value = 2;
             this.trackBar_Both_LEDs.Scroll += new System.EventHandler(this.trackBar_Both_LEDs_Scroll);
             // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(87, 373);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(227, 13);
+            this.label11.TabIndex = 18;
+            this.label11.Text = "First select the type of control and the setpoint.";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -710,32 +724,33 @@
         private System.Windows.Forms.TabPage tabSerialPort;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.TabPage tabInput;
-        private System.Windows.Forms.TabPage tabControl;
         private System.Windows.Forms.CheckBox rxEnableCheckBox;
         private System.Windows.Forms.Button button_chart_Stop;
         private System.Windows.Forms.Button button_chart_Start;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox textBox_Error;
+        private System.Windows.Forms.Button button_show_error;
+        private System.Windows.Forms.TabPage tabControl;
+        private System.Windows.Forms.Label label_type_of_control;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox textBox_One_LED;
+        private System.Windows.Forms.TextBox textBox_Both_LEDs;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button button_One;
+        private System.Windows.Forms.Button button_Both;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button button_set_point_one_LED;
         private System.Windows.Forms.Button button_set_point_both_LED;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TrackBar trackBar_One_LED;
         private System.Windows.Forms.TrackBar trackBar_Both_LEDs;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button button_One;
-        private System.Windows.Forms.Button button_Both;
-        private System.Windows.Forms.TextBox textBox_One_LED;
-        private System.Windows.Forms.TextBox textBox_Both_LEDs;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label_type_of_control;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.TextBox textBox_Error;
-        private System.Windows.Forms.Button button_show_error;
+        private System.Windows.Forms.Label label11;
     }
 }
 

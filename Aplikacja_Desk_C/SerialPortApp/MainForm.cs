@@ -332,6 +332,11 @@ namespace SerialPortApp
             picked_type_of_control_Both_LEDs = true;
             picked_type_of_control_One_LED = false;
             _spManager.Send("TWO");
+            button_show_error.Enabled = true;
+            button_chart_Start.Enabled = true;
+            button_chart_Stop.Enabled = true;
+            label11.Text = "Now you can generate the chart.";
+            label11.Location = new System.Drawing.Point(120, 373);
             label_type_of_control.Text = "You are controling both of LEDs.";
             this.button_Both.BackColor = System.Drawing.Color.Blue;
             this.button_One.BackColor = System.Drawing.Color.Gray;
@@ -348,6 +353,11 @@ namespace SerialPortApp
             picked_type_of_control_Both_LEDs = false;
             picked_type_of_control_One_LED = true;
             _spManager.Send("ONE");
+            button_show_error.Enabled = true;
+            button_chart_Start.Enabled = true;
+            button_chart_Stop.Enabled = true;
+            label11.Text = "Now you can generate the chart.";
+            label11.Location = new System.Drawing.Point(120, 373);
             label_type_of_control.Text = "You are controling just one LED.";
             this.button_Both.BackColor = System.Drawing.Color.Gray;
             this.button_One.BackColor = System.Drawing.Color.Blue;
@@ -496,6 +506,5 @@ namespace SerialPortApp
                 }
             }
         }
-
     }
 }
