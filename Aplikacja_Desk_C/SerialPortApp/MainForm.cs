@@ -67,8 +67,8 @@ namespace SerialPortApp
         // Variables for file operations
         bool send_just_text = true;
         string path_to_csv_file = "C:/Users/Milosz/STM32CubeIDE/workspace_1.4.0/Projekt_STM32/Aplikacja_Desk_C/SerialPortApp/bin/x64/Debug";
-        string file_name = "data.csv";
-
+        string file_name = "data";
+        bool saving_to_file = false;
         #endregion
 
         #region Event handlers
@@ -335,8 +335,10 @@ namespace SerialPortApp
             button_show_error.Enabled = true;
             button_chart_Start.Enabled = true;
             button_chart_Stop.Enabled = true;
+            button_start_saving.Enabled = true;
+            button_stop_saving.Enabled = true;
             label11.Text = "Now you can generate the chart.";
-            label11.Location = new System.Drawing.Point(120, 373);
+            label11.Location = new System.Drawing.Point(150, 364);
             label_type_of_control.Text = "You are controling both of LEDs.";
             this.button_Both.BackColor = System.Drawing.Color.Blue;
             this.button_One.BackColor = System.Drawing.Color.Gray;
@@ -440,8 +442,8 @@ namespace SerialPortApp
          */
         private void _saveDataToCsvFile(double t, int set_val, double out_val, int max, int min, string path, string name)
         {
-            // Open file
-            System.IO.StreamWriter writer = new System.IO.StreamWriter(path + "/" + name, true);
+            // Open file or create and then open
+            System.IO.StreamWriter writer = new System.IO.StreamWriter(path + "/" + name + ".csv", true);
             if (writer != null)
             {
                 if (send_just_text)
@@ -496,8 +498,8 @@ namespace SerialPortApp
                     }
 
                     chart1.Series[0].Points.AddXY(_plotTime, outValue);
-
-                    _saveDataToCsvFile(_plotTime, set_val, outValue, max_val, min_val, path_to_csv_file, file_name);
+                    if(saving_to_file)
+                        _saveDataToCsvFile(_plotTime, set_val, outValue, max_val, min_val, path_to_csv_file, file_name);
                     _plotTime += _plotTimeStep;
                 }
                 catch(Exception ex)
@@ -505,6 +507,57 @@ namespace SerialPortApp
                     Debug.WriteLine(ex.Message);
                 }
             }
+        }
+
+        /*
+         * write string as path to csv file TextBox event method 
+         * @param sender - contains a reference to the control/object
+         * @param e - contains the event data
+         */
+        private void textBox_path_to_file_TextChanged(object sender, EventArgs e)
+        {
+            path_to_csv_file = textBox_path_to_file.Text;
+        }
+
+        /*
+         * write string as name of csv file TextBox event method 
+         * @param sender - contains a reference to the control/object
+         * @param e - contains the event data
+         */
+        private void textBox_file_name_TextChanged(object sender, EventArgs e)
+        {
+            file_name = textBox_file_name.Text;
+        }
+
+        /*
+         * Start saving data to csv file 'Start saving' button click event method 
+         * @param sender - contains a reference to the control/object
+         * @param e - contains the event data
+         */
+        private void button_start_saving_Click(object sender, EventArgs e)
+        {
+            if(textBox_file_name.Text != null && textBox_path_to_file.Text != null)
+            {
+                saving_to_file = true;
+                this.button_start_saving.BackColor = System.Drawing.Color.Green;
+                this.button_stop_saving.BackColor = System.Drawing.Color.Gray;
+                textBox_file_name.Enabled = false;
+                textBox_path_to_file.Enabled = false;
+            }
+        }
+
+        /*
+         * Stop saving data to csv file 'Stop saving' button click event method
+         * @param sender - contains a reference to the control/object
+         * @param e - contains the event data
+         */
+        private void button_stop_saving_Click(object sender, EventArgs e)
+        {
+            saving_to_file = false;
+            this.button_start_saving.BackColor = System.Drawing.Color.Gray;
+            this.button_stop_saving.BackColor = System.Drawing.Color.Red;
+            textBox_file_name.Enabled = true;
+            textBox_path_to_file.Enabled = true;
         }
     }
 }

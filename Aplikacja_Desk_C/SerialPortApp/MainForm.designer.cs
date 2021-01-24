@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.baudRateLabel = new System.Windows.Forms.Label();
             this.dataBitsLabel = new System.Windows.Forms.Label();
             this.parityLabel = new System.Windows.Forms.Label();
@@ -58,6 +58,14 @@
             this.tabMain = new System.Windows.Forms.TabControl();
             this.tabSerialPort = new System.Windows.Forms.TabPage();
             this.tabInput = new System.Windows.Forms.TabPage();
+            this.button_stop_saving = new System.Windows.Forms.Button();
+            this.button_start_saving = new System.Windows.Forms.Button();
+            this.label14 = new System.Windows.Forms.Label();
+            this.textBox_file_name = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.textBox_path_to_file = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
             this.button_show_error = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
@@ -83,7 +91,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.trackBar_One_LED = new System.Windows.Forms.TrackBar();
             this.trackBar_Both_LEDs = new System.Windows.Forms.TrackBar();
-            this.label11 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.serialSettingsBindingSource)).BeginInit();
             this.groupBox_settings.SuspendLayout();
             this.groupBox_receive.SuspendLayout();
@@ -361,6 +368,13 @@
             // 
             // tabInput
             // 
+            this.tabInput.Controls.Add(this.button_stop_saving);
+            this.tabInput.Controls.Add(this.button_start_saving);
+            this.tabInput.Controls.Add(this.label14);
+            this.tabInput.Controls.Add(this.textBox_file_name);
+            this.tabInput.Controls.Add(this.label13);
+            this.tabInput.Controls.Add(this.textBox_path_to_file);
+            this.tabInput.Controls.Add(this.label12);
             this.tabInput.Controls.Add(this.label11);
             this.tabInput.Controls.Add(this.button_show_error);
             this.tabInput.Controls.Add(this.label10);
@@ -378,10 +392,84 @@
             this.tabInput.Text = "Input plot";
             this.tabInput.UseVisualStyleBackColor = true;
             // 
+            // button_stop_saving
+            // 
+            this.button_stop_saving.Enabled = false;
+            this.button_stop_saving.Location = new System.Drawing.Point(39, 387);
+            this.button_stop_saving.Name = "button_stop_saving";
+            this.button_stop_saving.Size = new System.Drawing.Size(75, 23);
+            this.button_stop_saving.TabIndex = 25;
+            this.button_stop_saving.Text = "Stop saving";
+            this.button_stop_saving.UseVisualStyleBackColor = true;
+            this.button_stop_saving.Click += new System.EventHandler(this.button_stop_saving_Click);
+            // 
+            // button_start_saving
+            // 
+            this.button_start_saving.Enabled = false;
+            this.button_start_saving.Location = new System.Drawing.Point(39, 365);
+            this.button_start_saving.Name = "button_start_saving";
+            this.button_start_saving.Size = new System.Drawing.Size(75, 23);
+            this.button_start_saving.TabIndex = 24;
+            this.button_start_saving.Text = "Start saving";
+            this.button_start_saving.UseVisualStyleBackColor = true;
+            this.button_start_saving.Click += new System.EventHandler(this.button_start_saving_Click);
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(39, 418);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(75, 13);
+            this.label14.TabIndex = 23;
+            this.label14.Text = "Switch \'\\\' to \'/\'";
+            // 
+            // textBox_file_name
+            // 
+            this.textBox_file_name.Location = new System.Drawing.Point(416, 433);
+            this.textBox_file_name.Name = "textBox_file_name";
+            this.textBox_file_name.Size = new System.Drawing.Size(127, 20);
+            this.textBox_file_name.TabIndex = 22;
+            this.textBox_file_name.TextChanged += new System.EventHandler(this.textBox_file_name_TextChanged);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(358, 438);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(55, 13);
+            this.label13.TabIndex = 21;
+            this.label13.Text = "File name:";
+            // 
+            // textBox_path_to_file
+            // 
+            this.textBox_path_to_file.Location = new System.Drawing.Point(36, 433);
+            this.textBox_path_to_file.Name = "textBox_path_to_file";
+            this.textBox_path_to_file.Size = new System.Drawing.Size(316, 20);
+            this.textBox_path_to_file.TabIndex = 20;
+            this.textBox_path_to_file.TextChanged += new System.EventHandler(this.textBox_path_to_file_TextChanged);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(4, 437);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(35, 13);
+            this.label12.TabIndex = 19;
+            this.label12.Text = "Path: ";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(152, 364);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(227, 13);
+            this.label11.TabIndex = 18;
+            this.label11.Text = "First select the type of control and the setpoint.";
+            // 
             // button_show_error
             // 
             this.button_show_error.Enabled = false;
-            this.button_show_error.Location = new System.Drawing.Point(388, 389);
+            this.button_show_error.Location = new System.Drawing.Point(403, 372);
             this.button_show_error.Name = "button_show_error";
             this.button_show_error.Size = new System.Drawing.Size(104, 23);
             this.button_show_error.TabIndex = 17;
@@ -392,7 +480,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(468, 421);
+            this.label10.Location = new System.Drawing.Point(483, 404);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(27, 13);
             this.label10.TabIndex = 16;
@@ -401,7 +489,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(385, 421);
+            this.label9.Location = new System.Drawing.Point(400, 404);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(49, 13);
             this.label9.TabIndex = 15;
@@ -410,7 +498,7 @@
             // textBox_Error
             // 
             this.textBox_Error.Enabled = false;
-            this.textBox_Error.Location = new System.Drawing.Point(435, 418);
+            this.textBox_Error.Location = new System.Drawing.Point(450, 401);
             this.textBox_Error.Name = "textBox_Error";
             this.textBox_Error.Size = new System.Drawing.Size(32, 20);
             this.textBox_Error.TabIndex = 14;
@@ -420,7 +508,7 @@
             // 
             this.button_chart_Stop.BackColor = System.Drawing.Color.Gray;
             this.button_chart_Stop.Enabled = false;
-            this.button_chart_Stop.Location = new System.Drawing.Point(218, 389);
+            this.button_chart_Stop.Location = new System.Drawing.Point(283, 382);
             this.button_chart_Stop.Name = "button_chart_Stop";
             this.button_chart_Stop.Size = new System.Drawing.Size(93, 35);
             this.button_chart_Stop.TabIndex = 2;
@@ -432,7 +520,7 @@
             // 
             this.button_chart_Start.BackColor = System.Drawing.Color.Gray;
             this.button_chart_Start.Enabled = false;
-            this.button_chart_Start.Location = new System.Drawing.Point(89, 389);
+            this.button_chart_Start.Location = new System.Drawing.Point(154, 382);
             this.button_chart_Start.Name = "button_chart_Start";
             this.button_chart_Start.Size = new System.Drawing.Size(93, 35);
             this.button_chart_Start.TabIndex = 1;
@@ -443,25 +531,25 @@
             // chart1
             // 
             this.chart1.BackImageAlignment = System.Windows.Forms.DataVisualization.Charting.ChartImageAlignmentStyle.BottomLeft;
-            chartArea5.AxisX.LabelStyle.Format = "0.0";
-            chartArea5.AxisX.Maximum = 10D;
-            chartArea5.AxisX.Minimum = 0D;
-            chartArea5.AxisX.Title = "Time [s]";
-            chartArea5.AxisY.Interval = 20D;
-            chartArea5.AxisY.Maximum = 200D;
-            chartArea5.AxisY.Minimum = 0D;
-            chartArea5.AxisY.Title = "Light intensity [lux]";
-            chartArea5.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea5);
-            legend5.Name = "Legend1";
-            this.chart1.Legends.Add(legend5);
+            chartArea1.AxisX.LabelStyle.Format = "0.0";
+            chartArea1.AxisX.Maximum = 10D;
+            chartArea1.AxisX.Minimum = 0D;
+            chartArea1.AxisX.Title = "Time [s]";
+            chartArea1.AxisY.Interval = 20D;
+            chartArea1.AxisY.Maximum = 200D;
+            chartArea1.AxisY.Minimum = 0D;
+            chartArea1.AxisY.Title = "Light intensity [lux]";
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(-9, 0);
             this.chart1.Name = "chart1";
-            series5.ChartArea = "ChartArea1";
-            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series5.Legend = "Legend1";
-            series5.Name = "Output value";
-            this.chart1.Series.Add(series5);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Legend = "Legend1";
+            series1.Name = "Output value";
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(559, 373);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
@@ -656,15 +744,6 @@
             this.trackBar_Both_LEDs.Value = 2;
             this.trackBar_Both_LEDs.Scroll += new System.EventHandler(this.trackBar_Both_LEDs_Scroll);
             // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(87, 373);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(227, 13);
-            this.label11.TabIndex = 18;
-            this.label11.Text = "First select the type of control and the setpoint.";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -751,6 +830,13 @@
         private System.Windows.Forms.TrackBar trackBar_One_LED;
         private System.Windows.Forms.TrackBar trackBar_Both_LEDs;
         private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TextBox textBox_file_name;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox textBox_path_to_file;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Button button_stop_saving;
+        private System.Windows.Forms.Button button_start_saving;
     }
 }
 
