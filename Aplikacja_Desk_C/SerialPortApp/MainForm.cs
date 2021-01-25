@@ -338,7 +338,7 @@ namespace SerialPortApp
             button_start_saving.Enabled = true;
             button_stop_saving.Enabled = true;
             label11.Text = "Now you can generate the chart.";
-            label11.Location = new System.Drawing.Point(150, 364);
+            label11.Location = new System.Drawing.Point(160, 364);
             label_type_of_control.Text = "You are controling both of LEDs.";
             this.button_Both.BackColor = System.Drawing.Color.Blue;
             this.button_One.BackColor = System.Drawing.Color.Gray;
@@ -358,8 +358,10 @@ namespace SerialPortApp
             button_show_error.Enabled = true;
             button_chart_Start.Enabled = true;
             button_chart_Stop.Enabled = true;
+            button_start_saving.Enabled = true;
+            button_stop_saving.Enabled = true;
             label11.Text = "Now you can generate the chart.";
-            label11.Location = new System.Drawing.Point(120, 373);
+            label11.Location = new System.Drawing.Point(160, 364);
             label_type_of_control.Text = "You are controling just one LED.";
             this.button_Both.BackColor = System.Drawing.Color.Gray;
             this.button_One.BackColor = System.Drawing.Color.Blue;
