@@ -49,9 +49,9 @@ typedef enum {FALSE = 0, TRUE} bool;
 #define SP_MSG_SIZE 3
 
 /* Choose PID parameters */
-#define PID_PARAM_KP        3.0f              /* Proporcional 5.0 */ //6.0
-#define PID_PARAM_KI        1.5f              /* Integral 0.4 */ // 1.8
-#define PID_PARAM_KD        0.0f              /* Derivative */ // 0.1
+#define PID_PARAM_KP        3.0f              /* Proporcional */
+#define PID_PARAM_KI        1.5f              /* Integral */
+#define PID_PARAM_KD        0.0f              /* Derivative */
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -288,10 +288,6 @@ int main(void)
 
   // Init lcd
   LCD_Init(&hlcd1);
-
-  // Data display on lcd every 10ms
-  //__HAL_TIM_SET_AUTORELOAD(&htim7, 9999);
-  //HAL_TIM_Base_Start_IT(&htim7);
 
 
   // USART3

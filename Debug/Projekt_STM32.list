@@ -3411,8 +3411,6 @@ int main(void)
   LCD_Init(&hlcd1);
  8001d6a:	482d      	ldr	r0, [pc, #180]	; (8001e20 <main+0x134>)
  8001d6c:	f7ff fcf8 	bl	8001760 <LCD_Init>
-  //__HAL_TIM_SET_AUTORELOAD(&htim7, 9999);
-  //HAL_TIM_Base_Start_IT(&htim7);
 
 
   // USART3
